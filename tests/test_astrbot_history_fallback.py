@@ -1,46 +1,5 @@
 from __future__ import annotations
 
-import sys
-import types
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT.parent) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT.parent))
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-astrbot_module = types.ModuleType("astrbot")
-astrbot_api_module = types.ModuleType("astrbot.api")
-astrbot_api_event_module = types.ModuleType("astrbot.api.event")
-astrbot_core_module = types.ModuleType("astrbot.core")
-astrbot_core_message_module = types.ModuleType("astrbot.core.message")
-astrbot_components_module = types.ModuleType("astrbot.core.message.components")
-
-
-class AstrMessageEvent:
-    pass
-
-
-class Image:
-    pass
-
-
-class Plain:
-    pass
-
-
-astrbot_api_event_module.AstrMessageEvent = AstrMessageEvent
-astrbot_components_module.Image = Image
-astrbot_components_module.Plain = Plain
-
-sys.modules.setdefault("astrbot", astrbot_module)
-sys.modules.setdefault("astrbot.api", astrbot_api_module)
-sys.modules.setdefault("astrbot.api.event", astrbot_api_event_module)
-sys.modules.setdefault("astrbot.core", astrbot_core_module)
-sys.modules.setdefault("astrbot.core.message", astrbot_core_message_module)
-sys.modules.setdefault("astrbot.core.message.components", astrbot_components_module)
-
 from astrbot_plugin_angel_heart.roles.front_desk import FrontDesk
 
 

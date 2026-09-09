@@ -10,19 +10,11 @@
 
 from __future__ import annotations
 
-import sys
 import time
 import threading
 import tempfile
 from pathlib import Path
 from typing import Dict, List
-
-# 确保项目根目录在 sys.path 中
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT.parent) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT.parent))
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 import pytest
 

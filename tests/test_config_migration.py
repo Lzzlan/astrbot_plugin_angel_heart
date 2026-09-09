@@ -1,11 +1,4 @@
 import json
-import sys
-from pathlib import Path
-
-PLUGIN_ROOT = Path(__file__).resolve().parent.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
 
 from astrbot_plugin_angel_heart.core import config_migration
 

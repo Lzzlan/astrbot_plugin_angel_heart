@@ -1,41 +1,7 @@
 from __future__ import annotations
 
-import sys
-import types
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
-
-HERE = Path(__file__).resolve().parent
-PLUGIN_ROOT = HERE.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-
-for _mod_path in (
-    "astrbot",
-    "astrbot.api",
-    "astrbot.api.event",
-    "astrbot.core",
-    "astrbot.core.agent",
-    "astrbot.core.agent.message",
-    "astrbot.core.message",
-    "astrbot.core.message.components",
-    "astrbot.core.star",
-    "astrbot.core.star.context",
-):
-    sys.modules.setdefault(_mod_path, types.ModuleType(_mod_path))
-
-sys.modules["astrbot.api"].logger = MagicMock()
-sys.modules["astrbot.core.message.components"].Image = type("Image", (), {})
-sys.modules["astrbot.core.message.components"].At = type("At", (), {})
-sys.modules["astrbot.core.message.components"].File = type("File", (), {})
-sys.modules["astrbot.core.star.context"].Context = type("Context", (), {})
-sys.modules["astrbot.core.agent.message"].ImageURLPart = type(
-    "ImageURLPart",
-    (),
-    {"__init__": lambda self, image_url: setattr(self, "image_url", SimpleNamespace(**image_url))},
-)
 
 from astrbot_plugin_angel_heart.core.message_processor import MessageProcessor
 from astrbot_plugin_angel_heart.core.utils.message_utils import (

@@ -2,32 +2,9 @@
 
 from __future__ import annotations
 
-import sys
-import types
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
-HERE = Path(__file__).resolve().parent
-PLUGIN_ROOT = HERE.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-
-for _mod_path in (
-    "astrbot",
-    "astrbot.api",
-    "astrbot.api.event",
-    "astrbot.core",
-    "astrbot.core.agent",
-    "astrbot.core.agent.message",
-    "astrbot.core.message",
-    "astrbot.core.message.components",
-):
-    sys.modules.setdefault(_mod_path, types.ModuleType(_mod_path))
-
-sys.modules["astrbot.api"].logger = MagicMock()
 
 from astrbot_plugin_angel_heart.core.work_ledger import WorkLedger
 from astrbot_plugin_angel_heart.core.llm_analyzer import LLMAnalyzer

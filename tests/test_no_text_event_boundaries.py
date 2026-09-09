@@ -6,104 +6,11 @@
 
 from __future__ import annotations
 
-import sys
-import types
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-HERE = Path(__file__).resolve().parent
-PLUGIN_ROOT = HERE.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-
-for _mod_path in (
-    "astrbot",
-    "astrbot.api",
-    "astrbot.api.event",
-    "astrbot.api.star",
-    "astrbot.api.provider",
-    "astrbot.core",
-    "astrbot.core.agent",
-    "astrbot.core.agent.message",
-    "astrbot.core.message",
-    "astrbot.core.message.components",
-    "astrbot.core.star",
-    "astrbot.core.star.context",
-    "astrbot.core.star.register",
-    "astrbot.core.star.star_tools",
-    "astrbot.core.star.filter",
-    "astrbot.core.star.filter.command",
-    "astrbot.core.star.filter.command_group",
-):
-    sys.modules.setdefault(_mod_path, types.ModuleType(_mod_path))
-
-sys.modules["astrbot.api"].logger = MagicMock()
-sys.modules["astrbot.api.event"].MessageChain = MagicMock
-sys.modules["astrbot.api.event"].AstrMessageEvent = type("AstrMessageEvent", (), {})
-sys.modules["astrbot.core.star.context"].Context = type("Context", (), {})
-sys.modules["astrbot.api.star"].Star = type(
-    "Star", (), {"__init__": lambda self, ctx: None}
-)
-sys.modules["astrbot.api.star"].Context = type("Context", (), {})
-sys.modules["astrbot.api.star"].register = lambda *a, **k: (lambda f: f)
-sys.modules["astrbot.api.event"].filter = type(
-    "Filter",
-    (),
-    {
-        "EventMessageType": type(
-            "EventMessageType",
-            (),
-            {"GROUP_MESSAGE": 1, "PRIVATE_MESSAGE": 2},
-        ),
-        "event_message_type": lambda *a, **k: (lambda f: f),
-        "on_llm_request": lambda *a, **k: (lambda f: f),
-        "on_decorating_result": lambda *a, **k: (lambda f: f),
-        "after_message_sent": lambda *a, **k: (lambda f: f),
-    },
-)()
-sys.modules["astrbot.api.provider"].ProviderRequest = type("ProviderRequest", (), {})
-sys.modules["astrbot.api.provider"].LLMResponse = type("LLMResponse", (), {})
-sys.modules["astrbot.core.star.register"].register_on_agent_done = lambda *a, **k: (
-    lambda f: f
-)
-sys.modules["astrbot.core.star.star_tools"].StarTools = type(
-    "StarTools", (), {"get_data_dir": staticmethod(lambda name: PLUGIN_ROOT)}
-)
-sys.modules["astrbot.core.star.filter.command"].CommandFilter = type(
-    "CommandFilter", (), {}
-)
-sys.modules["astrbot.core.star.filter.command_group"].CommandGroupFilter = type(
-    "CommandGroupFilter", (), {}
-)
-
-_components = sys.modules["astrbot.core.message.components"]
-
-
-class _Plain:
-    def __init__(self, text: str = ""):
-        self.text = text
-
-
-class _At:
-    def __init__(self, qq: str = "", name: str = ""):
-        self.qq = qq
-        self.name = name
-
-
-class _Poke:
-    pass
-
-
-_components.Plain = _Plain
-_components.At = _At
-_components.AtAll = type("AtAll", (), {})
-_components.Reply = type("Reply", (), {})
-_components.Poke = _Poke
-_components.Image = type("Image", (), {})
-_components.File = type("File", (), {})
+from astrbot.core.message.components import At, Plain, Poke
 
 
 class _FakeRuntimeTasks:
@@ -163,7 +70,7 @@ def _plugin():
 class TestPokeEntranceIgnore:
     def test_poke_event_ignored_and_not_stopped(self):
         plugin = _plugin()
-        event = _Event(chain=[_Poke()], outline="[Poke]")
+        event = _Event(chain=[Poke()], outline="[Poke]")
         assert plugin._should_process(event) is False
         assert event.stopped is False
 
@@ -172,19 +79,19 @@ class TestPokeEntranceIgnore:
         plugin = _plugin()
         plugin.front_desk = MagicMock()
         plugin.front_desk.handle_event = AsyncMock()
-        event = _Event(chain=[_Poke()], outline="[Poke]")
+        event = _Event(chain=[Poke()], outline="[Poke]")
         await plugin.smart_reply_handler(event)
         plugin.front_desk.handle_event.assert_not_awaited()
         assert event.stopped is False
 
     def test_plain_text_event_still_processed(self):
         plugin = _plugin()
-        event = _Event(chain=[_Plain("你好")], outline="你好", message_str="你好")
+        event = _Event(chain=[Plain("你好")], outline="你好", message_str="你好")
         assert plugin._should_process(event) is True
 
     def test_at_self_event_still_processed(self):
         plugin = _plugin()
         event = _Event(
-            chain=[_At(qq="10000")], outline="[At:10000]", message_str="", is_at=True
+            chain=[At(qq="10000")], outline="[At:10000]", message_str="", is_at=True
         )
         assert plugin._should_process(event) is True

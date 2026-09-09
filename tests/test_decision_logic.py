@@ -6,27 +6,10 @@
 
 from __future__ import annotations
 
-import sys
 import json
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-# 确保 astrbot_plugin_angel_heart 包可被导入（core/、models/ 等使用相对导入）
-HERE = Path(__file__).resolve().parent
-PLUGIN_ROOT = HERE.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-# astrbot stubs（conftest.py 已做，这里加固）
-import types as _types
-for _mod_path in (
-    "astrbot", "astrbot.api", "astrbot.api.event",
-    "astrbot.core", "astrbot.core.agent", "astrbot.core.agent.message",
-    "astrbot.core.message", "astrbot.core.message.components",
-):
-    sys.modules.setdefault(_mod_path, _types.ModuleType(_mod_path))
 
 
 def make_config(reply_even: bool, force_reply: bool = True):

@@ -1,16 +1,9 @@
 """FrontDesk 来源登记路径测试：cache_message 时用上游同步字段登记。"""
 
-import sys
 import types
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
-HERE = Path(__file__).resolve().parent
-_PARENT = str(HERE.parent.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
 
 from core.chat_sources import ChatSourcesStore
 from astrbot_plugin_angel_heart.roles.front_desk import FrontDesk

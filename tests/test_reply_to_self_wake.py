@@ -7,17 +7,10 @@
 本测试锁定三处口径一致：入库 is_at_self=True、metadata 含 at_self、wake=True。
 """
 
-import sys
 import types
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
-HERE = Path(__file__).resolve().parent
-_PARENT = str(HERE.parent.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
 
 from astrbot.core.message.components import Reply
 

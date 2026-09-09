@@ -1,15 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import sys
-from pathlib import Path
 from types import SimpleNamespace
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(PROJECT_ROOT.parent) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT.parent))
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from astrbot_plugin_angel_heart.tools.image_understanding import AngelDescribeImageTool
 

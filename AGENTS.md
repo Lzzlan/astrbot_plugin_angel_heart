@@ -137,6 +137,19 @@ AngelHeart 是一个专为 AstrBot 平台设计的智能群聊交互插件，采
 2. **消息格式**：兼容纯文本和多模态消息
 3. **平台适配**：适配不同聊天平台的消息格式
 
+## 测试规范
+
+### 测试环境探查（硬性前置）
+
+1. **跑任何测试前先探查部署环境**：先 `docker ps` 确认是否存在 astrbot 容器。
+2. **存在 astrbot 容器时，必须用 docker 测试**，标准命令（容器名、路径以 `docker ps` 与 `docker inspect` 实际输出为准）：
+
+   ```
+   docker exec astrbot sh -c "cd /AstrBot && python -m pytest data/plugins/astrbot_plugin_angel_heart/tests -q"
+   ```
+
+3. **禁止宿主机直跑 pytest**：不探查部署环境就自行模拟测试环境是错误路径——宿主机环境与容器不符，会超时或产生假结果，掩盖真实问题。
+
 ## 扩展点
 
 ### 自定义触发器

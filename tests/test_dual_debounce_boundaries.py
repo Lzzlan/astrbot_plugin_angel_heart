@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import sys
 import time
 import types
 from pathlib import Path
@@ -23,34 +22,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-HERE = Path(__file__).resolve().parent
-PLUGIN_ROOT = HERE.parent
-_PARENT = str(PLUGIN_ROOT.parent)
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-
-for _mod_path in (
-    "astrbot",
-    "astrbot.api",
-    "astrbot.api.event",
-    "astrbot.core",
-    "astrbot.core.agent",
-    "astrbot.core.agent.message",
-    "astrbot.core.message",
-    "astrbot.core.message.components",
-    "astrbot.core.star",
-    "astrbot.core.star.context",
-):
-    sys.modules.setdefault(_mod_path, types.ModuleType(_mod_path))
-
-# AstrBot 兼容导入留桩
-sys.modules["astrbot.api"].logger = MagicMock()
-sys.modules["astrbot.api.event"].MessageChain = MagicMock
-sys.modules["astrbot.core.message.components"].Plain = type("Plain", (), {})
-sys.modules["astrbot.core.message.components"].At = type("At", (), {})
-sys.modules["astrbot.core.star.context"].Context = type("Context", (), {})
-
 from astrbot_plugin_angel_heart.core.config_manager import ConfigManager
+
+PLUGIN_ROOT = Path(__file__).resolve().parent.parent
 from astrbot_plugin_angel_heart.core.debounce_manager import (
     ChatEnergyState,
     DebounceManager,
