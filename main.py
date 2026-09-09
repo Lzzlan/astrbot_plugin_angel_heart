@@ -27,7 +27,7 @@ except ImportError:
     import logging
 
     logger = logging.getLogger(__name__)
-from astrbot.core.message.components import Plain, At, AtAll, Reply
+from astrbot.core.message.components import Plain, At, AtAll, Reply, Poke
 
 from .core.config_manager import ConfigManager
 from .core.config_migration import run_migration
@@ -351,11 +351,21 @@ class AngelHeartPlugin(Star):
             )
             return False
 
+    def _is_poke_event(self, event: AstrMessageEvent) -> bool:
+        """检查消息链是否含戳一戳组件（无文字互动通知）。"""
+        return any(isinstance(comp, Poke) for comp in event.get_messages())
+
     def _should_process(self, event: AstrMessageEvent) -> bool:
         """检查是否需要处理此消息"""
         chat_id = event.unified_msg_origin
 
         try:
+            # 戳一戳为无文字互动通知，不属于对话内容：入口直接无视。
+            # 不缓存、不分析、不登记工作；不停事件，专门的戳一戳回应插件仍可处理。
+            if self._is_poke_event(event):
+                logger.debug(f"AngelHeart[{chat_id}]: 戳一戳事件已无视。")
+                return False
+
             if self._is_upstream_command_event(event):
                 logger.debug(
                     f"AngelHeart[{chat_id}]: 检测到上游 command/skill 事件，已跳过。"
